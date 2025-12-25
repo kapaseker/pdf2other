@@ -1,0 +1,12 @@
+[package]
+name = "pdf2other"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+pdfium-render = "0.8"
+image = "0.25"
+
+[build-dependencies]
+zip = "0.6"

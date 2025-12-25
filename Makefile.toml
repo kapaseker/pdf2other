@@ -1,0 +1,39 @@
+[tasks.build-release]
+description = "构建 release 版本并打包"
+dependencies = ["cargo-build-release", "package-release"]
+
+[tasks.cargo-build-release]
+command = "cargo"
+args = ["build", "--release"]
+
+[tasks.package-release]
+description = "将 release 版本的 exe 和 dep 目录下的文件打包"
+condition = { platforms = ["linux", "macos"] }
+command = "bash"
+args = ["scripts/package.sh", "release"]
+
+[tasks.package-release-windows]
+description = "Windows 打包脚本"
+condition = { platforms = ["windows"] }
+command = "powershell"
+args = ["-ExecutionPolicy", "Bypass", "-File", "scripts/package.ps1", "-Profile", "release"]
+
+[tasks.build]
+description = "构建 debug 版本并打包"
+dependencies = ["cargo-build", "package-debug"]
+
+[tasks.cargo-build]
+command = "cargo"
+args = ["build"]
+
+[tasks.package-debug]
+description = "将 debug 版本的 exe 和 dep 目录下的文件打包"
+condition = { platforms = ["linux", "macos"] }
+command = "bash"
+args = ["scripts/package.sh", "debug"]
+
+[tasks.package-debug-windows]
+description = "Windows 打包脚本"
+condition = { platforms = ["windows"] }
+command = "powershell"
+args = ["-ExecutionPolicy", "Bypass", "-File", "scripts/package.ps1", "-Profile", "debug"]
