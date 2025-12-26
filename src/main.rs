@@ -22,6 +22,10 @@ struct Args {
     /// 渲染DPI
     #[arg(long, default_value_t = 150)]
     dpi: u32,
+
+    /// 输出目录，默认为与PDF文件同名的目录
+    #[arg(short, long, value_name = "DIR")]
+    dir: Option<PathBuf>,
 }
 
 #[derive(Debug)]
@@ -136,11 +140,26 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // 获取输出目录和文件名
-    let output_dir = args.pdf_path.parent()
-        .ok_or("无法获取PDF文件所在目录")?;
     let pdf_stem = args.pdf_path.file_stem()
         .and_then(|s| s.to_str())
         .ok_or("无法获取PDF文件名")?;
+    
+    // 确定输出目录
+    let output_dir = if let Some(dir) = &args.dir {
+        // 如果指定了目录，使用指定的目录
+        dir.clone()
+    } else {
+        // 默认：使用PDF文件所在目录下的同名目录
+        let pdf_parent = args.pdf_path.parent()
+            .ok_or("无法获取PDF文件所在目录")?;
+        pdf_parent.join(pdf_stem)
+    };
+    
+    // 创建输出目录（如果不存在）
+    std::fs::create_dir_all(&output_dir)
+        .map_err(|e| format!("无法创建输出目录 {}: {}", output_dir.display(), e))?;
+    
+    println!("输出目录: {}", output_dir.display());
 
     // 确定文件扩展名
     let ext = if format == "jpg" { "jpeg" } else { &format };

@@ -8,6 +8,10 @@ args = ["build", "--release"]
 
 [tasks.package-release]
 description = "将 release 版本的 exe 和 dep 目录下的文件打包"
+dependencies = ["package-release-linux", "package-release-windows"]
+
+[tasks.package-release-linux]
+description = "Linux/macOS 打包脚本"
 condition = { platforms = ["linux", "macos"] }
 command = "bash"
 args = ["scripts/package.sh", "release"]
@@ -28,6 +32,10 @@ args = ["build"]
 
 [tasks.package-debug]
 description = "将 debug 版本的 exe 和 dep 目录下的文件打包"
+dependencies = ["package-debug-linux", "package-debug-windows"]
+
+[tasks.package-debug-linux]
+description = "Linux/macOS 打包脚本"
 condition = { platforms = ["linux", "macos"] }
 command = "bash"
 args = ["scripts/package.sh", "debug"]
